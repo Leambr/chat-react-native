@@ -1,0 +1,32 @@
+[
+    {
+        "userId": 1567,
+        "sender": "+33112121212",
+        "content": "Hello"
+    },
+    {
+        "userId": 1789,
+        "sender": "+33789898989",
+        "content": "Yo bro"
+    },
+    {
+        "userId": 1789,
+        "sender": "+33789898989",
+        "content": "Ca va ?"
+    },
+    {
+        "userId": 1567,
+        "sender": "+33112121212",
+        "content": "Ca va, merci. Ca te dit d'aller faire un volley toute à l'heure ? J'hésite entre beach ou en gymnase."
+    },
+    {
+        "userId": 1567,
+        "sender": "+33112121212",
+        "content": "Sinon demain si ça t'arrange."
+    },
+    {
+        "userId": 1789,
+        "sender": "+33789898989",
+        "content": "Vas y chaud"
+    }
+]

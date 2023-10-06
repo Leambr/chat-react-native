@@ -1,20 +1,41 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
+import messages from './DATA/messages.json';
+import { Message } from './components/Message';
+import { CurrentUserProvider } from './core/CurrentUserContext';
+import { Input } from './components/Input';
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    return (
+        <CurrentUserProvider>
+            <SafeAreaView style={styles.wrapper}>
+                <StatusBar />
+                <FlatList
+                    data={messages}
+                    renderItem={({ item }) => <Message textMessage={item} />}
+                    keyExtractor={(item) => item.id}
+                />
+                <Input />
+            </SafeAreaView>
+        </CurrentUserProvider>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    wrapper: {
+        flex: 1,
+        backgroundColor: '#fff',
+        // alignItems: 'start',
+        justifyContent: 'start',
+    },
+    subWrapper: {
+        flex: 5,
+    },
+    subWrapperSm: {
+        flex: 1,
+    },
+    input: {
+        width: '100%',
+        justifyContent: 'end',
+    },
 });
