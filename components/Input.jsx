@@ -10,32 +10,27 @@ import {
     View,
 } from 'react-native';
 import messages from '../DATA/messages.json';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Input = () => {
     const [messageValue, setMessageValue] = useState();
-    // const [randomAnswer, setRandomAnswer] = useState();
 
-    // const randomAnswerList = [
-    //     { id: 8, sender: '+33112121212', content: 'Plutôt ce soir' },
-    //     { id: 8, sender: '+33112121212', content: 'Demain si ça te va' },
-    //     { id: 8, sender: '+33112121212', content: 'Je sais pas comme tu veux' },
-    // ];
+    const storeData = async (messageValue) => {
+        try {
+            const jsonValue = JSON.stringify(messageValue);
+            await AsyncStorage.setItem('answer', jsonValue);
+        } catch (e) {
+            throw Error();
+        }
 
-    // const chooseRandomAnswer = () => {
-    //     const choosenAnswer = randomAnswerList[Math.floor(Math.random() * randomAnswerList.length)];
-    //     setRandomAnswer(choosenAnswer);
-    // };
-
-    const onSendMessage = () => {
-        messages.push({ userId: 1567, sender: '+33112121212', content: messageValue });
-        setMessageValue('');
+        console.log('Done.');
     };
 
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         chooseRandomAnswer;
-    //     }, 3000);
-    // }, []);
+    const onSendMessage = () => {
+        messages.push({ id: 7, userId: 1567, sender: '+33112121212', content: messageValue });
+        setMessageValue('');
+        storeData();
+    };
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -48,6 +43,13 @@ export const Input = () => {
                         value={messageValue}
                         onChangeText={(messageValue) => setMessageValue(messageValue)}
                     />
+
+                    {/* <TouchableOpacity onPress={onSendMessage}>
+                        <Image
+                            style={styles.sendButton}
+                            source={require('../assets/arrow-up.png')}
+                        />
+                    </TouchableOpacity> */}
 
                     {!messageValue ? (
                         <Button title="send" onPress={onSendMessage} disabled />
@@ -76,5 +78,10 @@ const styles = StyleSheet.create({
         height: 'auto',
         paddingBottom: 4,
         justifyContent: 'space-around',
+    },
+    sendButton: {
+        padding: 10,
+        width: 20,
+        height: 20,
     },
 });
