@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
-import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
-import messages from './DATA/messages.json';
+import { useEffect, useState } from 'react';
+import { FlatList, SafeAreaView, StyleSheet } from 'react-native';
+import uuid from 'react-native-uuid';
+import { Input } from './components/Input';
 import { Message } from './components/Message';
 import { CurrentUserProvider } from './core/CurrentUserContext';
-import { Input } from './components/Input';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
     const [allMessages, setAllMessages] = useState();
@@ -25,7 +25,8 @@ export default function App() {
                 setAllMessages(retrievedMessages);
             }
         });
-    }, []);
+    }, [allMessages]);
+
     return (
         <CurrentUserProvider>
             <SafeAreaView style={styles.wrapper}>
@@ -33,7 +34,7 @@ export default function App() {
                 <FlatList
                     data={allMessages}
                     renderItem={({ item }) => <Message textMessage={item} />}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={() => uuid.v4()}
                 />
                 <Input />
             </SafeAreaView>
