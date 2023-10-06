@@ -15,21 +15,26 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const Input = () => {
     const [messageValue, setMessageValue] = useState();
 
-    const storeData = async (messageValue) => {
+    const storeData = async () => {
         try {
             const jsonValue = JSON.stringify(messageValue);
+            console.log('jsonValue', jsonValue);
             await AsyncStorage.setItem('answer', jsonValue);
+            console.log('Data stored successfully.');
         } catch (e) {
-            throw Error();
+            console.error('Error storing data:', e);
         }
-
-        console.log('Done.');
     };
 
     const onSendMessage = () => {
-        messages.push({ id: 7, userId: 1567, sender: '+33112121212', content: messageValue });
-        setMessageValue('');
+        messages.push({
+            id: messages.length + 1,
+            userId: 1567,
+            sender: '+33112121212',
+            content: messageValue,
+        });
         storeData();
+        setMessageValue('');
     };
 
     return (
@@ -52,7 +57,7 @@ export const Input = () => {
                     </TouchableOpacity> */}
 
                     {!messageValue ? (
-                        <Button title="send" onPress={onSendMessage} disabled />
+                        <Button title="send" disabled />
                     ) : (
                         <Button title="send" onPress={onSendMessage} />
                     )}
