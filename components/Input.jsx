@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Button,
     Keyboard,
@@ -11,31 +11,54 @@ import {
 } from 'react-native';
 import messages from '../DATA/messages.json';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useCurrentUser } from '../core/CurrentUserContext';
 
 export const Input = () => {
     const [messageValue, setMessageValue] = useState();
+    const [storedMessages, setStoredMessages] = useState([]);
+    const { currentUser } = useCurrentUser();
 
-    const storeData = async () => {
+    const storeMessage = async () => {
         try {
-            const jsonValue = JSON.stringify(messageValue);
-            console.log('jsonValue', jsonValue);
-            await AsyncStorage.setItem('answer', jsonValue);
+            const newMessage = {
+                id: messages.length + 1,
+                userId: 1567,
+                sender: currentUser,
+                content: messageValue,
+            };
+
+            const updatedMessages = [...storedMessages, newMessage];
+            const jsonValue = JSON.stringify(updatedMessages);
+            await AsyncStorage.setItem('myAnswer', jsonValue);
             console.log('Data stored successfully.');
         } catch (e) {
             console.error('Error storing data:', e);
         }
     };
 
+    const getStoredMessage = async () => {
+        try {
+            const jsonValue = await AsyncStorage.getItem('myAnswer');
+            return jsonValue != null ? JSON.parse(jsonValue) : null;
+        } catch (error) {
+            console.error('Error storing data:', e);
+        }
+    };
+
     const onSendMessage = () => {
-        messages.push({
-            id: messages.length + 1,
-            userId: 1567,
-            sender: '+33112121212',
-            content: messageValue,
-        });
-        storeData();
+        storeMessage();
         setMessageValue('');
     };
+
+    useEffect(() => {
+        getStoredMessage().then((retrievedMessages) => {
+            if (retrievedMessages) {
+                setStoredMessages(retrievedMessages);
+            }
+        });
+    }, []);
+
+    console.log(storedMessages);
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
