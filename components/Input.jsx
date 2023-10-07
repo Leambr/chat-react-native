@@ -58,14 +58,14 @@ export const Input = () => {
         if (messageValue) {
             storeMessage(messageValue, currentUser);
             setMessageValue('');
+            getRandomMessage();
         }
-        setTimeout(() => {
-            storeMessage(messageAuto.content, messageAuto.sender);
-        }, 3000);
     };
 
     useEffect(() => {
-        getRandomMessage();
+        setTimeout(() => {
+            storeMessage(messageAuto.content, messageAuto.sender);
+        }, 3000);
     }, []);
 
     return (
