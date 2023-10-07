@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Button,
     Keyboard,
@@ -11,24 +11,34 @@ import {
     View,
 } from 'react-native';
 import messages from '../DATA/messages.json';
+import randomAnswers from '../DATA/randomAnswers.json';
 import { useCurrentUser } from '../core/CurrentUserContext';
 
 export const Input = () => {
     const [messageValue, setMessageValue] = useState();
     const [storedMessages, setStoredMessages] = useState(messages);
+    const [messageAuto, setMessageAuto] = useState({});
     const { currentUser } = useCurrentUser();
 
-    const storeMessage = async () => {
-        console.log('store', storedMessages.length);
+    const storeMessage = async (content, sender) => {
         try {
             const newMessage = {
                 id: storedMessages.length + 1,
-                userId: 1567,
-                sender: currentUser,
-                content: messageValue,
+                sender: sender,
+                content: content,
             };
 
             const updatedMessages = [...storedMessages, newMessage];
+
+            if (messageAuto.content) {
+                const autoResponse = {
+                    id: updatedMessages.length + 1,
+                    sender: messageAuto.sender,
+                    content: messageAuto.content,
+                };
+                updatedMessages.push(autoResponse);
+            }
+
             setStoredMessages(updatedMessages);
             const jsonValue = JSON.stringify(updatedMessages);
             await AsyncStorage.setItem('myAnswer', jsonValue);
@@ -38,10 +48,25 @@ export const Input = () => {
         }
     };
 
-    const onSendMessage = () => {
-        storeMessage();
-        setMessageValue('');
+    const getRandomMessage = () => {
+        const randomIndex = Math.floor(Math.random() * randomAnswers.length);
+        const newMessageAuto = randomAnswers[randomIndex];
+        setMessageAuto(newMessageAuto);
     };
+
+    const onSendMessage = () => {
+        if (messageValue) {
+            storeMessage(messageValue, currentUser);
+            setMessageValue('');
+            getRandomMessage();
+        }
+    };
+
+    useEffect(() => {
+        setTimeout(() => {
+            storeMessage(messageAuto.content, messageAuto.sender);
+        }, 3000);
+    }, []);
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
